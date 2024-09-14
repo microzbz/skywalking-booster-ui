@@ -67,11 +67,17 @@ export const logStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
+      res.data.data.services.unshift({ value: "0", label: "All" });
       this.services = res.data.data.services;
       return res.data;
     },
     async getInstances(id: string) {
-      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      let serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      console.log(typeof serviceId === "undefined");
+      if (typeof serviceId === "undefined") {
+        serviceId = 0;
+      }
+      console.log("getInstances" + serviceId);
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -84,7 +90,12 @@ export const logStore = defineStore({
       return res.data;
     },
     async getEndpoints(id: string, keyword?: string) {
-      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      let serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      console.log(typeof serviceId === "undefined");
+      if (typeof serviceId === "undefined") {
+        serviceId = 0;
+      }
+      console.log("getEndpoints" + serviceId);
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,

@@ -81,6 +81,7 @@ export const traceStore = defineStore({
       if (res.data.errors) {
         return res.data;
       }
+      res.data.data.services.unshift({ value: "0", label: "All" });
       this.services = res.data.data.services;
       return res.data;
     },
@@ -115,7 +116,10 @@ export const traceStore = defineStore({
       return res.data;
     },
     async getInstances(id: string) {
-      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      let serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      if (typeof serviceId === "undefined") {
+        serviceId = 0;
+      }
       const res: AxiosResponse = await graphql.query("queryInstances").params({
         serviceId: serviceId,
         duration: useAppStoreWithOut().durationTime,
@@ -128,7 +132,10 @@ export const traceStore = defineStore({
       return res.data;
     },
     async getEndpoints(id: string, keyword?: string) {
-      const serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      let serviceId = this.selectorStore.currentService ? this.selectorStore.currentService.id : id;
+      if (typeof serviceId === "undefined") {
+        serviceId = 0;
+      }
       const res: AxiosResponse = await graphql.query("queryEndpoints").params({
         serviceId,
         duration: useAppStoreWithOut().durationTime,
